@@ -1,36 +1,36 @@
 <script>
-  let decks = [];
-  let newDeckName = '';
+  import { fetchDecks, createDeck } from '/api/deckServiceClient';
 
-  async function fetchDecks() {
-    const res = await fetch('http://localhost:8000/api/v1/decks/');
-    decks = await res.json();
+  let decks = ([]);
+  let newDeckName = ('');
+
+  async function handleFetch() {
+    decks = await fetchDecks();
   }
 
-  async function createDeck() {
-    const res = await fetch('http://localhost:8000/api/v1/decks/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newDeckName })
-    });
-    if (res.ok) {
-      newDeckName = '';
-      fetchDecks();
-    }
+  async function handleCreate() {
+    await createDeck(newDeckName);
+    newDeckName = '';
+    handleFetch();
   }
 
-  fetchDecks();
+  handleFetch();
 </script>
 
-<h1>Deck AI Stack</h1>
+<h1 class="text-2xl font-bold mb-4">Deck AI Stack</h1>
 
-<form on:submit|preventDefault={createDeck}>
-  <input bind:value={newDeckName} placeholder="New Deck Name" required />
-  <button type="submit">Create</button>
+<form onsubmit={handleCreate} class="mb-4">
+  <input 
+    bind:value={newDeckName} 
+    placeholder="New Deck Name" 
+    required 
+    class="border p-2 mr-2"
+  />
+  <button type="submit" class="bg-blue-500 text-white px-4 py-2">Create</button>
 </form>
 
 <ul>
-  {#each decks as deck}
-    <li>{deck.name}</li>
+  {#each decks as deck (deck.id)}
+    <li class="border-b py-2">{deck.name}</li>
   {/each}
 </ul>
