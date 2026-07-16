@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.db import get_db
 from app.models.deck import Deck
@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.post("/", response_model=DeckSchema)
 def create_deck(deck_in: DeckCreate, db: Session = Depends(get_db)):
-    deck = Deck(**deck_in.model_dump(), user_id=1) # Hardcoded user for now
+    deck = Deck(**deck_in.model_dump(), user_id=1)
     db.add(deck)
     db.commit()
     db.refresh(deck)
